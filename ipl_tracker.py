@@ -1,4 +1,4 @@
-class Team:
+cclass Team:
     def __init__(self, name, points, placement):
         self.name = name
         self.points = points
@@ -30,3 +30,35 @@ team_data = [
 ]
 
 all_teams = [Team(name, points, place) for name, points, place in team_data]
+
+# --- Assign ownership ---
+
+players = [
+    TeamManager("Ollie", ['CSK', 'RCB', 'GT', 'RR', 'LSG']),
+    TeamManager("Luke", ['MI', 'KKR', 'SRH', 'DC', 'PBKS']),
+
+]
+
+for player in players:
+    player.assign_teams(all_teams)
+
+# --- Output results ---
+print("\n📊 IPL Competition Stats:\n")
+for player in players:
+    print(f"{player.name}")
+    print(f"  Avg Points: {player.average_points():.2f}")
+    print(f"  Avg Placement: {player.average_placement():.2f}\n")
+    
+# --- Top team ---
+top_team = sorted(all_teams, key=lambda x: x.placement)[0]
+
+# Find who owns the top team
+top_owner = next((p.name for p in players if top_team.name in p.team_names), "Unknown")
+# Find highest average points
+best_points_player = max(players, key=lambda p: p.average_points())
+# Find lowest average placement (closer to 1 is better)
+best_placement_player = min(players, key=lambda p: p.average_placement())
+
+print(f"🥇 Top Team: {top_team.name} ({top_team.points} pts) - Owned by: {top_owner}")
+print(f"\n🏆 Highest Average Points: {best_points_player.name} ({best_points_player.average_points():.2f})")
+print(f"\n📍 Best Average Placement: {best_placement_player.name} ({best_placement_player.average_placement():.2f})")
