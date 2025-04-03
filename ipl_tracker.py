@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 
 # --- CONFIG ---
-USE_MOCK_DATA = True  # Set to False to use the live API
+USE_MOCK_DATA = False  # Set to False to use the live API
 SERIES_ID = "9237"  # IPL 2024 series ID (you can change this later)
 
 # --- CLASS DEFINITIONS ---
@@ -31,7 +31,7 @@ class TeamManager:
         return sum(t.placement for t in self.teams) / len(self.teams)
 
 # --- API DATA FETCH ---
-@st.cache_data(ttl=3600)
+@st.cache_data(ttl=900)
 def fetch_ipl_table(series_id):
     url = f"https://cricbuzz-cricket.p.rapidapi.com/stats/v1/series/{series_id}/points-table"
     headers = {
