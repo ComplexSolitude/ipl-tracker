@@ -107,7 +107,7 @@ st.title("🏏 IPL Team Tracker")
 
 source_label = f"Live API for Series ID {SERIES_ID}" if not USE_MOCK_DATA else "Mock Data"
 st.info(f"**Data Source:** {source_label}")
-st.info(f"Last updated: {last_updated}")
+st.caption(f"Last updated: {last_updated}")
 
 st.subheader("📊 Full Table")
 team_rows = [{"Team": t.name, "Points": t.points, "Placement": t.placement} for t in all_teams]
