@@ -1,4 +1,4 @@
-cclass Team:
+class Team:
     def __init__(self, name, points, placement):
         self.name = name
         self.points = points
