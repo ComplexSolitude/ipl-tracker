@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 
 # --- CONFIG ---
-USE_MOCK_DATA = False  # Change to False to use the live API
+USE_MOCK_DATA = True  # Change to False to use the live API
 
 # --- CLASS DEFINITIONS ---
 class Team:
