@@ -102,7 +102,8 @@ best_placement_player = min(players, key=lambda p: p.average_placement())
 # --- STREAMLIT UI ---
 st.title("🏏 IPL Team Tracker")
 
-st.info(f"**Data Source:** {'Mock Data' if USE_MOCK_DATA else 'Live API for Series ID ' + SERIES_ID}")
+source_label = f"Live API for Series ID {SERIES_ID}" if not USE_MOCK_DATA else "Mock Data"
+st.info(f"**Data Source:** {source_label}")
 
 st.subheader("📊 Full Table")
 team_rows = [{"Team": t.name, "Points": t.points, "Placement": t.placement} for t in all_teams]
