@@ -2,7 +2,8 @@ import streamlit as st
 import requests
 
 # --- CONFIG ---
-USE_MOCK_DATA = True  # Change to False to use the live API
+USE_MOCK_DATA = True  # Set to False to use the live API
+SERIES_ID = "9237"  # IPL 2024 series ID (you can change this later)
 
 # --- CLASS DEFINITIONS ---
 class Team:
@@ -30,9 +31,9 @@ class TeamManager:
         return sum(t.placement for t in self.teams) / len(self.teams)
 
 # --- API DATA FETCH ---
-@st.cache_data(ttl=900)
-def fetch_ipl_table():
-    url = "https://cricbuzz-cricket.p.rapidapi.com/mcenter/v1/41881/comm "
+@st.cache_data(ttl=3600)
+def fetch_ipl_table(series_id):
+    url = f"https://cricbuzz-cricket.p.rapidapi.com/stats/v1/series/{series_id}/points-table"
     headers = {
         "X-RapidAPI-Key": st.secrets["x_rapidapi_key"],
         "X-RapidAPI-Host": "cricbuzz-cricket.p.rapidapi.com"
@@ -41,37 +42,47 @@ def fetch_ipl_table():
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
         data = response.json()
+        team_list = data['pointsTable'][0]['pointsTableInfo']
+
+        # Sort by points descending to assign placement
+        team_list_sorted = sorted(team_list, key=lambda x: x['points'], reverse=True)
+
         return [
             {
-                "team": t["team"],
-                "points": t["points"],
-                "placement": t["position"]
+                "team": team["teamName"],
+                "points": team["points"],
+                "placement": i + 1
             }
-            for t in data["points_table"]
+            for i, team in enumerate(team_list_sorted)
         ]
     else:
         st.error(f"API error: {response.status_code}")
         return []
 
-# --- DATA SOURCING ---
+# --- GET DATA ---
 if USE_MOCK_DATA:
     raw_data = [
         {'team': 'CSK', 'points': 12, 'placement': 4},
-        {'team': 'RCB',  'points': 10, 'placement': 6},
-        {'team': 'GT',   'points': 6,  'placement': 8},
-        {'team': 'RR',   'points': 14, 'placement': 2},
-        {'team': 'LSG',  'points': 8,  'placement': 7},
-        {'team': 'MI',   'points': 10, 'placement': 5},
-        {'team': 'KKR',  'points': 16, 'placement': 1},
-        {'team': 'SRH',  'points': 12, 'placement': 3},
-        {'team': 'DC',   'points': 6,  'placement': 9},
-        {'team': 'PBKS', 'points': 4,  'placement': 10}
+        {'team': 'RCB', 'points': 10, 'placement': 6},
+        {'team': 'GT', 'points': 6, 'placement': 8},
+        {'team': 'RR', 'points': 14, 'placement': 2},
+        {'team': 'LSG', 'points': 8, 'placement': 7},
+        {'team': 'MI', 'points': 10, 'placement': 5},
+        {'team': 'KKR', 'points': 16, 'placement': 1},
+        {'team': 'SRH', 'points': 12, 'placement': 3},
+        {'team': 'DC', 'points': 6, 'placement': 9},
+        {'team': 'PBKS', 'points': 4, 'placement': 10}
     ]
 else:
-    raw_data = fetch_ipl_table()
+    raw_data = fetch_ipl_table(SERIES_ID)
 
-# --- CREATE TEAM OBJECTS ---
+# --- CONVERT TO OBJECTS ---
 all_teams = [Team(d["team"], d["points"], d["placement"]) for d in raw_data]
+
+# --- SAFETY CHECK ---
+if not all_teams:
+    st.error("No team data available. Please check the API or mock fallback.")
+    st.stop()
 
 # --- ASSIGN PLAYERS ---
 players = [
@@ -82,7 +93,7 @@ players = [
 for p in players:
     p.assign_teams(all_teams)
 
-# --- STATS CALCULATIONS ---
+# --- STATS CALC ---
 top_team = sorted(all_teams, key=lambda x: x.placement)[0]
 top_owner = next((p.name for p in players if top_team.name in p.team_names), "Unknown")
 best_points_player = max(players, key=lambda p: p.average_points())
@@ -91,8 +102,7 @@ best_placement_player = min(players, key=lambda p: p.average_placement())
 # --- STREAMLIT UI ---
 st.title("🏏 IPL Team Tracker")
 
-# Toggle mock/API view
-st.info(f"**Data Source:** {'Mock Data' if USE_MOCK_DATA else 'Live API'}")
+st.info(f"**Data Source:** {'Mock Data' if USE_MOCK_DATA else 'Live API for Series ID ' + SERIES_ID}")
 
 st.subheader("📊 Full Table")
 team_rows = [{"Team": t.name, "Points": t.points, "Placement": t.placement} for t in all_teams]
@@ -106,6 +116,6 @@ for player in players:
 
 st.subheader("🏆 Highlights")
 col1, col2, col3 = st.columns(3)
-col1.metric("Top Team", top_team.name, f"Owned by {top_owner}")
+col1.caption("Top Team", top_team.name, f"Owned by {top_owner}")
 col2.metric("Best Avg Points", best_points_player.name, f"{best_points_player.average_points():.2f}")
 col3.metric("Best Avg Placement", best_placement_player.name, f"{best_placement_player.average_placement():.2f}")
