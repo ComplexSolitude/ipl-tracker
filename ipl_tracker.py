@@ -34,8 +34,8 @@ class TeamManager:
 def fetch_ipl_table():
     url = "https://cricbuzz-cricket.p.rapidapi.com/mcenter/v1/41881/comm "
     headers = {
-        "X-RapidAPI-Key": st.secrets[x_rapidapi_key],
-        "X-RapidAPI-Host": "x-rapidapi-host: cricbuzz-cricket.p.rapidapi.com"
+        "X-RapidAPI-Key": st.secrets["x_rapidapi_key"],
+        "X-RapidAPI-Host": "cricbuzz-cricket.p.rapidapi.com"
     }
 
     response = requests.get(url, headers=headers)
