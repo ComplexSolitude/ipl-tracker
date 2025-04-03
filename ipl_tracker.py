@@ -31,7 +31,7 @@ class TeamManager:
         return sum(t.placement for t in self.teams) / len(self.teams)
 
 # --- API DATA FETCH ---
-@st.cache_data(ttl=900)
+@st.cache_data(ttl=3600)
 def fetch_ipl_table(series_id):
     url = f"https://cricbuzz-cricket.p.rapidapi.com/stats/v1/series/{series_id}/points-table"
     headers = {
