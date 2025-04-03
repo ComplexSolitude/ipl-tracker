@@ -1,9 +1,10 @@
 import streamlit as st
 import requests
 from datetime import datetime
+import pytz
 
 # --- CONFIG ---
-USE_MOCK_DATA = False  # Set to False to use the live API
+USE_MOCK_DATA = True  # Set to False to use the live API
 SERIES_ID = "9237"  # IPL 2024 series ID (you can change this later)
 
 # --- CLASS DEFINITIONS ---
@@ -74,9 +75,11 @@ if USE_MOCK_DATA:
         {'team': 'DC', 'points': 6, 'placement': 9},
         {'team': 'PBKS', 'points': 4, 'placement': 10}
     ]
+    st.info("Using MOCK DATA While Under Development")
 else:
     raw_data = fetch_ipl_table(SERIES_ID)
-    last_updated = datetime.now().strftime("%Y-%m-%d %H:%M")
+    london_time = datetime.now(pytz.timezone("Europe/London"))
+    last_updated = london_time.strftime("%Y-%m-%d %H:%M")
     
 
 # --- CONVERT TO OBJECTS ---
