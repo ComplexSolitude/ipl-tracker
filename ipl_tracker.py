@@ -117,6 +117,7 @@ for player in players:
 
 st.subheader("🏆 Highlights")
 col1, col2, col3 = st.columns(3)
-col1.caption("Top Team", top_team.name, f"Owned by {top_owner}")
+col1.metric("Top Team", top_team.name)
+col1.caption(f"Owned by {top_owner}")
 col2.metric("Best Avg Points", best_points_player.name, f"{best_points_player.average_points():.2f}")
 col3.metric("Best Avg Placement", best_placement_player.name, f"{best_placement_player.average_placement():.2f}")
