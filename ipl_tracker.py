@@ -4,7 +4,7 @@ from datetime import datetime
 import pytz
 
 # --- CONFIG ---
-USE_MOCK_DATA = True  # Set to False to use the live API
+USE_MOCK_DATA = False  # Set to False to use the live API
 SERIES_ID = "9237"  # IPL 2024 series ID (you can change this later)
 
 # --- CLASS DEFINITIONS ---
