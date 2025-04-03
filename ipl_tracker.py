@@ -78,8 +78,8 @@ if USE_MOCK_DATA:
     st.info("Using MOCK DATA While Under Development")
 else:
     raw_data = fetch_ipl_table(SERIES_ID)
-    london_time = datetime.now(pytz.timezone("Europe/London"))
-    last_updated = london_time.strftime("%Y-%m-%d %H:%M")
+london_time = datetime.now(pytz.timezone("Europe/London"))
+last_updated = london_time.strftime("%Y-%m-%d %H:%M")
     
 
 # --- CONVERT TO OBJECTS ---
